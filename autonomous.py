@@ -10,11 +10,10 @@ from timeit import default_timer as timer
 import string
 
 
-def get_dbwallet_from_autonomousdb(dbwallet_dir):
+def get_dbwallet_from_autonomousdb(dbwallet_dir, signer):
     dbwalletzip_location = "/tmp/dbwallet.zip"
     adb_ocid = os.getenv("ADB_OCID")     
 
-    signer = oci.auth.signers.get_resource_principals_signer()   # authentication based on instance principal
     atp_client = oci.database.DatabaseClient(config={}, signer=signer)
     atp_wallet_pwd = ''.join(random.choices(string.ascii_uppercase + string.digits, k=15)) # random string
     # the wallet password is only used for creation of the Java jks files, which aren't used by cx_Oracle so the value is not important
@@ -30,11 +29,11 @@ def get_dbwallet_from_autonomousdb(dbwallet_dir):
     return atp_wallet_pwd   
 
 
-def get_connection(dbwallet_dir):          
+def get_connection(dbwallet_dir, signer):          
     dbuser = os.getenv("DBUSER")
     dbpwd = os.getenv("DBPWD")
     dbsvc = os.getenv("DBSVC")
-    wallet_password = get_dbwallet_from_autonomousdb(dbwallet_dir)
+    wallet_password = get_dbwallet_from_autonomousdb(dbwallet_dir, signer)
 
     # Update SQLNET.ORA
     with open(dbwallet_dir + '/sqlnet.ora') as orig_sqlnetora:

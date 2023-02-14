@@ -1,6 +1,6 @@
 schema_version: 20180708
 name: load-file
-version: 0.0.106
+version: 0.0.113
 runtime: python
 build_image: fnproject/python:3.9-dev
 run_image: fnproject/python:3.9
@@ -8,8 +8,10 @@ entrypoint: /python/bin/fdk /function/func.py handler
 memory: 2048
 timeout: 300
 config:
-  ADB_OCID: ocid1.autonomousdatabase.oc1.iad.xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
-  DBPWD: YYxxxxxx123***
-  DBSVC: XXXYYYY_high
+  TOPIC_OCID: ocid1.onstopic.oc1.iad.aaaaaaaaxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+  ADB_OCID: ocid1.autonomousdatabase.oc1.iad.yyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy
+  COMPANY: ACME CORP XXXXXXXXXXXX
+  DBPWD: XXXXYYYYYYY2121**
+  DBSVC: ZZZZZZ_high
   DBUSER: ADMIN
   TNS_ADMIN: /tmp/dbwallet

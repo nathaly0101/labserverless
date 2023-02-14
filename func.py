@@ -10,7 +10,7 @@ from autonomous import get_connection, create_table, load_data
 from object_storage import get_object
 
 def handler(ctx, data: io.BytesIO = None):
-    logging.getLogger().info('signer request')
+    logging.getLogger().info('signer request')  # authentication based on instance principal
     signer = oci.auth.signers.get_resource_principals_signer()
     
     try:        
@@ -38,7 +38,7 @@ def do(signer, body):
             logging.getLogger().info("File object received")
 
             dbwallet_dir = os.getenv('TNS_ADMIN')
-            dbconnection = get_connection(dbwallet_dir)
+            dbconnection = get_connection(dbwallet_dir, signer)
             logging.getLogger().info("Successfully retrieved connection")
 
             create_table(dbconnection)            
@@ -46,6 +46,14 @@ def do(signer, body):
             input_csv_text = get_object(signer, namespace, bucketName, fileName)
 
             load_data(input_csv_text, dbconnection)
+            
+            companyName = os.getenv('COMPANY')
+            topicId = os.getenv('TOPIC_OCID')
+            messageDetails = oci.ons.models.MessageDetails(
+                body="Load process complete", title="Racing to the cloud :: " + companyName)
+
+            ons_client = oci.ons.NotificationDataPlaneClient(config={}, signer=signer)
+            ons_client.publish_message(topicId,messageDetails) 
 
             logging.getLogger().info("Load process complete")
  
